@@ -38,6 +38,7 @@ dependencies:
   flutter_signin_button: ^2.0.0
   path_provider: ^2.0.9
   http: ^0.13.4
+  models: ^0.0.2
 
 dev_dependencies:
   flutter_test:
