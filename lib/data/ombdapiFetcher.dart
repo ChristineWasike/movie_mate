@@ -4,6 +4,10 @@ import 'package:http/http.dart' as http;
 import 'models/movieDetailsModel.dart';
 import 'models/movieModel.dart';
 
+/// Class containing static methods to make calls to the OMDb API
+///
+/// NOTE: the query methods in this class throw Exceptions on invalid queries.
+/// These are to be caught by the client application.
 class omdbapiFetcher {
   static const apikey = "7053e438";
 

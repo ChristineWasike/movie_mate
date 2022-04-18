@@ -1,9 +1,14 @@
-// ignore_for_file: unused_label
-
 import 'dart:convert';
-
 import 'movieModel.dart';
 
+/// Data model that holds more detailed information of the movie.
+///
+/// This data has been separated from the Movie model since getting these details
+/// requires 1 API call per movie, while the basic details of the Movie model
+/// can be obtained through 1 API call per search result (set of movies)
+///
+/// This data is to be displayed to display more detailed information about the
+/// movie when it is clicked on by the user
 class MovieDetails extends Movie {
   final String title;
   final String year;

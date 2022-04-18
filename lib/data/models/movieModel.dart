@@ -1,3 +1,7 @@
+/// Data model that holds the basic information of the movie
+///
+/// This data (or part of it) is to be displayed as partial information of the
+/// movie in the feed, search, and other relevant tabs
 class Movie {
   final String title;
   final String year;
@@ -23,7 +27,8 @@ class Movie {
     );
   }
 
-  getName() => title;
-
+  getTitle() => title;
   getID() => imdbID;
+  getPoster() => posterSource;
+  getYear() => year;
 }
