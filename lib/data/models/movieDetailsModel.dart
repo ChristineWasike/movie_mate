@@ -1,5 +1,7 @@
 // ignore_for_file: unused_label
 
+import 'dart:convert';
+
 import 'movieModel.dart';
 
 class MovieDetails extends Movie {
@@ -16,7 +18,7 @@ class MovieDetails extends Movie {
   final String country;
   final String awards;
   final String posterSource;
-  final Map<String, String> ratings;
+  final List<Map<String, String>> ratings;
   // key: source, value: rating
   final String metascore;
   final String imdbRating;
@@ -78,7 +80,7 @@ class MovieDetails extends Movie {
         country: json["Country"],
         awards: json["Awards"],
         posterSource: json["Poster"],
-        ratings: json["Ratings"],
+        ratings: parseRatings(json["Ratings"]),
         metascore: json["Metascore"],
         imdbRating: json["imdbRating"],
         imdbVotes: json["imdbVotes"],
@@ -90,4 +92,16 @@ class MovieDetails extends Movie {
         website: json["Website"],
         response: json["Response"]);
   }
+
+  static List<Map<String, String>> parseRatings(List<dynamic> ratingList) {
+    List<Map<String, String>> res = [];
+    for (var rating in ratingList) {
+      Map<String, String> pair = {rating["Source"]: rating["Value"]};
+      res.add(pair);
+    }
+
+    return res;
+  }
+
+  getRatings() => ratings;
 }

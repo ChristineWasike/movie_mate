@@ -22,4 +22,8 @@ class Movie {
       type: json["Type"],
     );
   }
+
+  getName() => title;
+
+  getID() => imdbID;
 }

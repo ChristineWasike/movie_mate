@@ -5,11 +5,11 @@ import 'models/movieDetailsModel.dart';
 import 'models/movieModel.dart';
 
 class omdbapiFetcher {
-  final apikey = "7053e438";
+  static const apikey = "7053e438";
 
-  Future<List<Movie>> getMoviesOfSearch(String searchedQuery) async {
+  static Future<List<Movie>> getMoviesOfSearch(String searchedQuery) async {
     String query =
-        "https://www.omdbapi.com/?s=${searchedQuery}&type=movie&apikey=${apikey}";
+        "https://www.omdbapi.com/?s=$searchedQuery&type=movie&apikey=$apikey";
 
     final response = await http.get(Uri.parse(query));
 
@@ -25,9 +25,9 @@ class omdbapiFetcher {
     }
   }
 
-  Future<MovieDetails> getMovieDetails(String movieID) async {
+  static Future<MovieDetails> getMovieDetails(String movieID) async {
     String query =
-        "https://www.omdbapi.com/?i=${movieID}&type=movie&apikey=${apikey}";
+        "https://www.omdbapi.com/?i=$movieID&type=movie&apikey=$apikey";
 
     final response = await http.get(Uri.parse(query));
 
