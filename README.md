@@ -12,13 +12,20 @@ A collaborative project on building a movie app with Open MDB api.
 This project is a starting point for a Flutter application.
 
 ## Flutter and Dart versions
+Please ensure that you have **Flutter** version   `2.13.0-0.0.pre.62 • channel master` and **Dart** version `2.17.0-182.0.dev`.
+<br/>This will make it easier to debug code without worrying about running differnt SDK environments.
 
-You can run flutter doctor to check
+You can run `flutter --version` to check your version
 ```
 flutter --version
 ```
 
-Output should look something close to this:
+You can run `dart --version` to check your vesion
+```
+dart --version
+```
+
+*Output* should look something close to this:
 
 ```
 Flutter 2.13.0-0.0.pre.62 • channel master • https://github.com/flutter/flutter.git
@@ -27,7 +34,7 @@ Engine • revision 6b1a24b1a1
 Tools • Dart 2.17.0 (build 2.17.0-182.0.dev) • DevTools 2.11.1
 ```
 
-You can also run flutter doctor for a deeper assessment of your environment:
+You can also run `flutter doctor` for a deeper assessment of your environment:
  ```
  flutter doctor
  ```
