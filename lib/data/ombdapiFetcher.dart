@@ -12,6 +12,9 @@ class omdbapiFetcher {
   static const apikey = "7053e438";
 
   static Future<List<Movie>> getMoviesOfSearch(String searchedQuery) async {
+    if (searchedQuery == '') {
+      return [];
+    }
     String query =
         "https://www.omdbapi.com/?s=$searchedQuery&type=movie&apikey=$apikey";
 
