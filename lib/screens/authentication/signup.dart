@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../service/auth.dart';
 import '../home/home.dart';
 
 class SignUp extends StatefulWidget {
@@ -11,6 +11,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final AuthService _auth = AuthService();
+
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   // text field state
@@ -138,10 +140,14 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => loading = true);
-                            }
-                            const Home();
+                            if(_formKey.currentState!.validate()){
+                              dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                              if(result == null) {
+                                setState(() {
+                                  error = 'Please supply a valid email';
+                                });
+                              }
+                            }// const Home();
                           }),
                     ),
                     const SizedBox(height: 12.0),
