@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_mate/data/models/movieDetailsModel.dart';
 import 'package:movie_mate/data/models/movieModel.dart';
 import 'package:movie_mate/data/ombdapiFetcher.dart';
 
@@ -56,7 +57,7 @@ class MovieSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) => FutureBuilder<List<Movie>>(
-        future: omdbapiFetcher.getMoviesOfSearch(query),
+        future: omdbapiFetcher.getMoviesOfSearch(query).catchError(() => {}),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -66,13 +67,38 @@ class MovieSearch extends SearchDelegate {
                 return Container(
                   color: Colors.black,
                   alignment: Alignment.center,
-                  child: Text(
+                  child: const Text(
                     'Something went wrong!',
                     style: TextStyle(fontSize: 28, color: Colors.red),
                   ),
                 );
               } else {
-                return buildResultSuccess(snapshot.data![0]);
+                return FutureBuilder(
+                    future: snapshot.data!.isNotEmpty
+                        ? omdbapiFetcher
+                            .getMovieDetails(snapshot.data![0].getID())
+                        : null, // return Center(child: CircularProgressIndicator())
+                    builder: (subcontext, subsnapshot) {
+                      switch (subsnapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return Center(child: CircularProgressIndicator());
+                        default:
+                          if (subsnapshot.hasError) {
+                            return Container(
+                              color: Colors.black,
+                              alignment: Alignment.center,
+                              child: const Text(
+                                'Something went wrong!',
+                                style:
+                                    TextStyle(fontSize: 28, color: Colors.red),
+                              ),
+                            );
+                          } else {
+                            return buildResultSuccess(
+                                subsnapshot.data! as MovieDetails);
+                          }
+                      }
+                    });
               }
           }
         },
@@ -168,41 +194,56 @@ class MovieSearch extends SearchDelegate {
         },
       );
 
-  Widget buildResultSuccess(Movie movie) => Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3279e2), Colors.purple],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+  Widget buildResultSuccess(MovieDetails details) {
+    // MovieDetails details = await omdbapiFetcher.getMovieDetails(movie.getID());
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF3279e2), Colors.purple],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: ListView(
+        padding: EdgeInsets.all(64),
+        children: [
+          Container(
+            height: 200,
+            child: details.getPoster() != "N/A"
+                ? Image.network(
+                    details.getPoster(),
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg"),
+            padding: EdgeInsets.all(0),
           ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.all(64),
-          children: [
-            Text(
-              movie.getTitle(),
-              style: TextStyle(
-                fontSize: 32,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
+          Text(
+            details.getTitle(),
+            style: TextStyle(
+              fontSize: 32,
+              color: Colors.white,
             ),
-            // Icon(
-            //   movie.getID(),
-            //   color: Colors.white,
-            //   size: 140,
-            // ),
-            const SizedBox(height: 72),
-            Text(
-              movie.getYear(),
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white70,
-              ),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          // Icon(
+          //   movie.getID(),
+          //   color: Colors.white,
+          //   size: 140,
+          // ),
+          const SizedBox(height: 72),
+          Text(
+            details.getYear(),
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white70,
             ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      );
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
 }

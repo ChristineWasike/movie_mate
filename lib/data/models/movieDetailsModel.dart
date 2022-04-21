@@ -84,7 +84,9 @@ class MovieDetails extends Movie {
         language: json["Language"],
         country: json["Country"],
         awards: json["Awards"],
-        posterSource: json["Poster"],
+        posterSource: json["Poster"] == "N/A"
+            ? "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg"
+            : json["Poster"],
         ratings: parseRatings(json["Ratings"]),
         metascore: json["Metascore"],
         imdbRating: json["imdbRating"],
@@ -109,4 +111,22 @@ class MovieDetails extends Movie {
   }
 
   getRatings() => ratings;
+  getReleaseDate() => releaseDate;
+  getRuntime() => runtime;
+  getGenre() => genre;
+  getDirector() => director;
+  getWriter() => writer;
+  getActors() => actors;
+  getPlot() => plot;
+  getLanguage() => language;
+  getCountry() => country;
+  getAwards() => awards;
+  getMetascore() => metascore;
+  getImdbRating() => imdbRating;
+  getImdbVotes() => imdbVotes;
+  getDvd() => dvd;
+  getBoxOffice() => boxOffice;
+  getProduction() => production;
+  getWebsite() => website;
+  getResponse() => response;
 }
