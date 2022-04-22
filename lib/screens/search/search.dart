@@ -83,7 +83,8 @@ class MovieSearch extends SearchDelegate {
                         case ConnectionState.waiting:
                           return Center(child: CircularProgressIndicator());
                         default:
-                          if (subsnapshot.hasError) {
+                          if (subsnapshot.hasError ||
+                              subsnapshot.data == null) {
                             return Container(
                               color: Colors.black,
                               alignment: Alignment.center,
@@ -197,53 +198,62 @@ class MovieSearch extends SearchDelegate {
   Widget buildResultSuccess(MovieDetails details) {
     // MovieDetails details = await omdbapiFetcher.getMovieDetails(movie.getID());
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3279e2), Colors.purple],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: ListView(
-        padding: EdgeInsets.all(64),
-        children: [
-          Container(
-            height: 200,
-            child: details.getPoster() != "N/A"
-                ? Image.network(
-                    details.getPoster(),
-                    fit: BoxFit.cover,
-                  )
-                : Image.network(
-                    "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg"),
-            padding: EdgeInsets.all(0),
-          ),
-          Text(
-            details.getTitle(),
-            style: TextStyle(
-              fontSize: 32,
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          // Icon(
-          //   movie.getID(),
-          //   color: Colors.white,
-          //   size: 140,
-          // ),
-          const SizedBox(height: 72),
-          Text(
-            details.getYear(),
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white70,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-        ],
+    return Scaffold(
+      body: SingleChildScrollView(child: buildMoviePageBody(details)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.bookmark),
       ),
     );
   }
+
+  Widget buildMoviePageBody(MovieDetails details) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3279e2), Colors.purple],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 12),
+          children: [
+            Container(
+              height: 300,
+              child: details.getPoster() != "N/A"
+                  ? Image.network(
+                      details.getPoster(),
+                      fit: BoxFit.fitHeight,
+                    )
+                  : Image.network(
+                      "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg"),
+              padding: EdgeInsets.all(10),
+            ),
+            Text(
+              details.getTitle(),
+              style: const TextStyle(
+                fontSize: 32,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            // Icon(
+            //   movie.getID(),
+            //   color: Colors.white,
+            //   size: 140,
+            // ),
+            const SizedBox(height: 10),
+            Text(
+              details.getYear(),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white70,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      );
 }
