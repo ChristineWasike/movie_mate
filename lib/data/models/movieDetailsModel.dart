@@ -14,7 +14,7 @@ class MovieDetails extends Movie {
   final String year;
   final String releaseDate;
   final String runtime;
-  final String genre;
+  final List<String> genre;
   final String director;
   final String writer;
   final List<String> actors;
@@ -76,7 +76,7 @@ class MovieDetails extends Movie {
         year: json["Year"],
         releaseDate: json["Released"],
         runtime: json["Runtime"],
-        genre: json["Genre"],
+        genre: json["Genre"].split(", "),
         director: json["Director"],
         writer: json["Writer"],
         actors: json["Actors"].split(", "),
@@ -106,7 +106,6 @@ class MovieDetails extends Movie {
       Map<String, String> pair = {rating["Source"]: rating["Value"]};
       res.add(pair);
     }
-
     return res;
   }
 
@@ -124,7 +123,7 @@ class MovieDetails extends Movie {
   getMetascore() => metascore;
   getImdbRating() => imdbRating;
   getImdbVotes() => imdbVotes;
-  getDvd() => dvd;
+  getDVD() => dvd;
   getBoxOffice() => boxOffice;
   getProduction() => production;
   getWebsite() => website;

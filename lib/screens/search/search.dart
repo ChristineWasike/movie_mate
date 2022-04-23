@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_mate/data/models/movieDetailsModel.dart';
 import 'package:movie_mate/data/models/movieModel.dart';
 import 'package:movie_mate/data/ombdapiFetcher.dart';
-
+import 'package:movie_mate/screens/authentication/signup.dart';
+import 'package:movie_mate/screens/search/movieresult.dart';
+import 'package:movie_mate/screens/wrapper.dart';
 import '../home/home.dart';
 
 class Search extends StatefulWidget {
@@ -40,7 +42,7 @@ class MovieSearch extends SearchDelegate {
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
-          icon: Icon(Icons.clear),
+          icon: const Icon(Icons.clear),
           onPressed: () {
             if (query.isEmpty) {
               close(context, null);
@@ -53,7 +55,8 @@ class MovieSearch extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
-      onPressed: () => close(context, null), icon: Icon(Icons.arrow_back));
+      onPressed: () => close(context, null),
+      icon: const Icon(Icons.arrow_back));
 
   @override
   Widget buildResults(BuildContext context) => FutureBuilder<List<Movie>>(
@@ -114,7 +117,7 @@ class MovieSearch extends SearchDelegate {
 
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               default:
                 if (snapshot.hasError || snapshot.data!.isEmpty) {
                   return buildNoSuggestions();
@@ -126,19 +129,31 @@ class MovieSearch extends SearchDelegate {
         ),
       );
 
-  Widget buildNoSuggestions() => Center(
+  Widget buildNoSuggestions() => const Center(
         child: Text(
           'No suggestions!',
           style: TextStyle(fontSize: 28, color: Colors.white),
         ),
       );
 
+  /// TODO: Fix occaisional bug where the where the suggestion variable does not match the
+  /// selection made by the user. this results in an error when making substrings
+  /// since the query length of the wrong movie may be out of bounds
   Widget buildSuggestionsSuccess(List<Movie>? suggestions) => ListView.builder(
         itemCount: suggestions!.length,
         itemBuilder: (context, index) {
           final suggestion = suggestions[index];
-          final queryText = suggestion.getTitle().substring(0, query.length);
-          final remainingText = suggestion.getTitle().substring(query.length);
+          print(suggestions.map((e) => e.getTitle()).toList());
+          print(query + "  |  " + suggestion.getTitle());
+
+          String queryText = suggestion.getTitle();
+          String remainingText = "";
+          try {
+            queryText = suggestion.getTitle().substring(0, query.length);
+            remainingText = suggestion.getTitle().substring(query.length);
+          } on RangeError catch (e) {
+            ;
+          }
 
           return ListTile(
             minVerticalPadding: 20,
@@ -146,17 +161,15 @@ class MovieSearch extends SearchDelegate {
               query = suggestion.getTitle();
               // 1. Show Results
               showResults(context);
-
               // 2. Close Search & Return Result
               // close(context, suggestion);
 
-              // 3. Navigate to Result Page
+              // // 3. Navigate to Result Page
               //  Navigator.push(
               //   context,
               //   MaterialPageRoute(
-              //     builder: (BuildContext context) => ResultPage(suggestion),
+              //     builder: (BuildContext context) => Wrapper()// buildResultSuccess(details),
               //   ),
-              // );
             },
             leading: Padding(
               child: suggestion.getPoster() != "N/A"
@@ -172,7 +185,7 @@ class MovieSearch extends SearchDelegate {
             title: RichText(
               text: TextSpan(
                 text: queryText,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -180,7 +193,7 @@ class MovieSearch extends SearchDelegate {
                 children: [
                   TextSpan(
                     text: remainingText,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white54,
                       fontSize: 18,
                     ),
@@ -198,62 +211,9 @@ class MovieSearch extends SearchDelegate {
   Widget buildResultSuccess(MovieDetails details) {
     // MovieDetails details = await omdbapiFetcher.getMovieDetails(movie.getID());
 
-    return Scaffold(
-      body: SingleChildScrollView(child: buildMoviePageBody(details)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.bookmark),
-      ),
-    );
-  }
+    // Icons favStatus  = details.isFavorite() ? Icons.favorite : Icons.favorite_border;
+    bool favStatus = false;
 
-  Widget buildMoviePageBody(MovieDetails details) => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3279e2), Colors.purple],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 12),
-          children: [
-            Container(
-              height: 300,
-              child: details.getPoster() != "N/A"
-                  ? Image.network(
-                      details.getPoster(),
-                      fit: BoxFit.fitHeight,
-                    )
-                  : Image.network(
-                      "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg"),
-              padding: EdgeInsets.all(10),
-            ),
-            Text(
-              details.getTitle(),
-              style: const TextStyle(
-                fontSize: 32,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            // Icon(
-            //   movie.getID(),
-            //   color: Colors.white,
-            //   size: 140,
-            // ),
-            const SizedBox(height: 10),
-            Text(
-              details.getYear(),
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.white70,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      );
+    return MovieResult(details);
+  }
 }

@@ -1,0 +1,241 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:movie_mate/data/models/movieDetailsModel.dart';
+import 'package:movie_mate/data/models/movieModel.dart';
+import 'package:movie_mate/screens/search/descriptiontext.dart';
+
+class MovieResult extends StatefulWidget {
+  MovieDetails details;
+
+  MovieResult(this.details, {Key? key}) : super(key: key);
+
+  @override
+  State<MovieResult> createState() => _MovieResultState();
+}
+
+class _MovieResultState extends State<MovieResult> {
+  bool favStatus = false;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3279e2), Colors.purple],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            child: SingleChildScrollView(
+                child: buildMoviePageBody(widget.details)),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                if (favStatus == false) {
+                  favStatus = true;
+                  // IMPLEMENT FAVOURITE ADDING BACKEND CALL
+                } else {
+                  favStatus = false;
+                  // IMPLEMENT FAVOURITE REMOVING BACKEND CALL
+                }
+              });
+            },
+            child: Icon(
+              favStatus ? Icons.favorite : Icons.favorite_border,
+              color: favStatus ? Colors.red : Colors.white,
+            ),
+          ),
+        ),
+      );
+
+  Widget buildMoviePageBody(MovieDetails details) => Container(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
+          children: [
+            Container(
+              height: 300,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(80),
+                child: details.getPoster() != "N/A"
+                    ? Image.network(
+                        details.getPoster(),
+                        fit: BoxFit.fitHeight,
+                      )
+                    : Image.network(
+                        "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie-768x1129.jpg",
+                        fit: BoxFit.fitHeight,
+                      ),
+              ),
+              padding: const EdgeInsets.all(10),
+            ),
+            Text(
+              details.getTitle(),
+              style: const TextStyle(
+                fontSize: 32,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            buildYearRating(details),
+            const SizedBox(height: 10),
+            buildGenres(details),
+            const SizedBox(height: 32),
+            buildPlot(details.getPlot()),
+          ],
+        ),
+      );
+
+  Widget buildYearRating(details) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              details.getYear(),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white70,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            // const SizedBox(width: 10),
+            Text(
+              "|",
+              style: TextStyle(color: Colors.white54),
+            ),
+            // const SizedBox(width: 10),
+            buildRating(details),
+
+            Text(
+              "|",
+              style: TextStyle(color: Colors.white54),
+            ),
+
+            IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: Colors.white60,
+              ),
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) =>
+                    buildInfoDialogBuilder(details),
+              ),
+            )
+          ],
+        ),
+      );
+
+  Widget buildGenres(MovieDetails details) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (var genre in details.getGenre())
+            Row(children: [Chip(label: Text(genre)), SizedBox(width: 5)])
+        ],
+      );
+
+  Widget buildPlot(plot) => Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      child: Column(children: [
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text("PLOT",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              )),
+        ),
+        DescriptionTextWidget(text: plot, maxlength: 250),
+      ]));
+
+  Widget buildInfoDialogBuilder(MovieDetails details) => AlertDialog(
+        title: const Text('More details'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: [
+              buildHeading("Released"),
+              Text(details.getReleaseDate()),
+              const SizedBox(height: 5),
+              const SizedBox(height: 5),
+              buildHeading("Runtime"),
+              Text(details.getRuntime()),
+              const SizedBox(height: 5),
+              buildHeading("Director"),
+              Text(details.getDirector()),
+              const SizedBox(height: 5),
+              buildHeading("Writer"),
+              Text(details.getWriter()),
+              const SizedBox(height: 5),
+              buildHeading("Actors"),
+              Text(details.getActors().join(", ")),
+              buildHeading("Language"),
+              Text(details.getLanguage()),
+              const SizedBox(height: 5),
+              buildHeading("Country"),
+              Text(details.getCountry()),
+              const SizedBox(height: 5),
+              buildHeading("Awards"),
+              Text(details.getAwards()),
+              const SizedBox(height: 5),
+              buildHeading("DVD"),
+              Text(details.getDVD()),
+              const SizedBox(height: 5),
+              buildHeading("BoxOffice"),
+              Text(details.getBoxOffice()),
+              const SizedBox(height: 5),
+              buildHeading("Production"),
+              Text(details.getProduction()),
+              const SizedBox(height: 5),
+              buildHeading("Website"),
+              Text(details.getWebsite()),
+              const SizedBox(height: 5),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Close'),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+
+  Widget buildRating(details) => Row(
+        children: [
+          Icon(Icons.star, color: Color(0xfff3ce13)),
+          const SizedBox(width: 5),
+          Text(
+            details.getImdbRating(),
+            style: const TextStyle(
+              fontSize: 20,
+              color: Colors.white70,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(width: 5),
+          Container(
+            child: Text(
+              "IMDb",
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Color(0xfff3ce13),
+            ),
+            padding: EdgeInsets.all(3),
+          )
+        ],
+      );
+
+  Widget buildHeading(String s) => Text(
+        s,
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+      );
+}
