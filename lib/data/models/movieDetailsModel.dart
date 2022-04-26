@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'movieModel.dart';
 
 /// Data model that holds more detailed information of the movie.
@@ -10,6 +9,7 @@ import 'movieModel.dart';
 /// This data is to be displayed to display more detailed information about the
 /// movie when it is clicked on by the user
 class MovieDetails extends Movie {
+  @override
   final String title;
   final String year;
   final String releaseDate;
@@ -22,13 +22,16 @@ class MovieDetails extends Movie {
   final String language;
   final String country;
   final String awards;
+  @override
   final String posterSource;
   final List<Map<String, String>> ratings;
   // key: source, value: rating
   final String metascore;
   final String imdbRating;
   final String imdbVotes;
+  @override
   final String imdbID;
+  @override
   final String type;
   // final String total
   final String dvd;

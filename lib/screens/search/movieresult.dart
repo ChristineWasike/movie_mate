@@ -27,10 +27,8 @@ class _MovieResultState extends State<MovieResult> {
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Container(
-            child: SingleChildScrollView(
-                child: buildMoviePageBody(widget.details)),
-          ),
+          body:
+              SingleChildScrollView(child: buildMoviePageBody(widget.details)),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               setState(() {
@@ -81,7 +79,7 @@ class _MovieResultState extends State<MovieResult> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            buildYearRating(details),
+            buildInfoRow(details),
             const SizedBox(height: 10),
             buildGenres(details),
             const SizedBox(height: 32),
@@ -90,11 +88,12 @@ class _MovieResultState extends State<MovieResult> {
         ),
       );
 
-  Widget buildYearRating(details) => Container(
+  Widget buildInfoRow(details) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // year of release
             Text(
               details.getYear(),
               style: const TextStyle(
@@ -104,11 +103,13 @@ class _MovieResultState extends State<MovieResult> {
               textAlign: TextAlign.center,
             ),
             // const SizedBox(width: 10),
-            Text(
+            const Text(
               "|",
               style: TextStyle(color: Colors.white54),
             ),
             // const SizedBox(width: 10),
+
+            // imbd rating and icon
             buildRating(details),
 
             Text(
@@ -162,7 +163,6 @@ class _MovieResultState extends State<MovieResult> {
               buildHeading("Released"),
               Text(details.getReleaseDate()),
               const SizedBox(height: 5),
-              const SizedBox(height: 5),
               buildHeading("Runtime"),
               Text(details.getRuntime()),
               const SizedBox(height: 5),
@@ -208,7 +208,7 @@ class _MovieResultState extends State<MovieResult> {
 
   Widget buildRating(details) => Row(
         children: [
-          Icon(Icons.star, color: Color(0xfff3ce13)),
+          const Icon(Icons.star, color: Color(0xfff3ce13)),
           const SizedBox(width: 5),
           Text(
             details.getImdbRating(),
@@ -220,7 +220,7 @@ class _MovieResultState extends State<MovieResult> {
           ),
           const SizedBox(width: 5),
           Container(
-            child: Text(
+            child: const Text(
               "IMDb",
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

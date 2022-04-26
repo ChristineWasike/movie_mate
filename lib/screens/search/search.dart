@@ -60,7 +60,9 @@ class MovieSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) => FutureBuilder<List<Movie>>(
-        future: omdbapiFetcher.getMoviesOfSearch(query).catchError(() => {}),
+        future: omdbapiFetcher
+            .getMoviesOfSearch(query)
+            .catchError((Object error) => {}),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -111,7 +113,9 @@ class MovieSearch extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) => Container(
         color: Colors.black,
         child: FutureBuilder<List<Movie>>(
-          future: omdbapiFetcher.getMoviesOfSearch(query).catchError(() => {}),
+          future: omdbapiFetcher
+              .getMoviesOfSearch(query)
+              .catchError((Object error) => {}),
           builder: (context, snapshot) {
             if (query.isEmpty) return buildNoSuggestions();
 
