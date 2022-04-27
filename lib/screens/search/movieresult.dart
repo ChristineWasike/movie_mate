@@ -35,6 +35,7 @@ class _MovieResultState extends State<MovieResult> {
                 if (favStatus == false) {
                   favStatus = true;
                   // IMPLEMENT FAVOURITE ADDING BACKEND CALL
+                  print(widget.details);
                 } else {
                   favStatus = false;
                   // IMPLEMENT FAVOURITE REMOVING BACKEND CALL

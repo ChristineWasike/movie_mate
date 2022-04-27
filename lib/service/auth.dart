@@ -1,5 +1,6 @@
 import 'package:movie_mate/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
 //
@@ -66,5 +67,17 @@ class AuthService {
       return null;
     }
   }
+
+//  User Details
+      Future<void>userSetup(String displayName) async{
+        CollectionReference users = FirebaseFirestore.instance.collection('Users');
+        FirebaseAuth _auth = FirebaseAuth.instance;
+        String? uid = _auth.currentUser?.uid.toString();
+        users.add({
+          'displayName': displayName,
+          'uid': uid
+        });
+        return;
+      }
 
 }
