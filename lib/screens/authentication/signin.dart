@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:movie_mate/screens/home/home.dart';
+import 'package:movie_mate/service/auth.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -11,6 +10,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final AuthService _auth = AuthService();
+
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -80,49 +81,51 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     width: 250,
                     height: 40,
-                    child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Colors.grey[600],
-                        padding: const EdgeInsets.all(0.0),
-                        elevation: 5.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.grey[600]!),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              const EdgeInsets.all(0.0)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          elevation: MaterialStateProperty.all<double>(5.0),
                         ),
+                        // color: Colors.grey[600],
+                        // padding: const EdgeInsets.all(0.0),
+                        // elevation: 5.0,
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(15),
+                        // ),
                         child: Container(
                           padding: const EdgeInsets.all(8.0),
                           child: const Text(
                             'Sign In',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => loading = true);
+                        onPressed: () async {
+                          if(_formKey.currentState!.validate()){
+                            dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                            if(result == null) {
+                              setState(() {
+                                error = 'Could not sign in with those credentials';
+                              });
+                            }
                           }
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Home()));
                         }),
                   ),
-                  const SizedBox(height: 12.0),
-                  Text(error,
-                      style:
-                          const TextStyle(color: Colors.red, fontSize: 14.0)),
-                  const SizedBox(height: 10.0),
-                  SignInButton(
-                    Buttons.Google,
-                    onPressed: () {},
-                  ),
-                  const SizedBox(height: 5.0),
-                  SignInButton(
-                    Buttons.Apple,
-                    onPressed: () {},
-                  ),
-                  const SizedBox(height: 5.0),
-                  SignInButton(
-                    Buttons.Facebook,
-                    onPressed: () {},
+                  SizedBox(height: 12.0),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
                   ),
                   const SizedBox(height: 20.0),
                   TextButton.icon(

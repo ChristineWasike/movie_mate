@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../service/auth.dart';
 import '../home/home.dart';
 
 class SignUp extends StatefulWidget {
@@ -11,6 +11,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final AuthService _auth = AuthService();
+
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   // text field state
@@ -119,29 +121,47 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
                     const SizedBox(height: 30.0),
-                    Container(
+                    SizedBox(
                       width: 250,
                       height: 40,
-                      child: RaisedButton(
-                          textColor: Colors.white,
-                          color: Colors.grey[600],
-                          padding: const EdgeInsets.all(0.0),
-                          elevation: 5.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.grey[600]!),
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.all(0.0)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            elevation: MaterialStateProperty.all<double>(5.0),
                           ),
+                          // textColor: Colors.white,
+                          // color: Colors.grey[600],
+                          // padding: const EdgeInsets.all(0.0),
+                          // elevation: 5.0,
+                          // shape: RoundedRectangleBorder(
+                          //   borderRadius: BorderRadius.circular(15),
+                          // ),
                           child: Container(
                             padding: const EdgeInsets.all(8.0),
                             child: const Text(
                               'Sign Up',
-                              style: TextStyle(fontSize: 16),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => loading = true);
-                            }
-                            const Home();
+                            if(_formKey.currentState!.validate()){
+                              dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                              if(result == null) {
+                                setState(() {
+                                  error = 'Please supply a valid email';
+                                });
+                              }
+                            }// const Home();
                           }),
                     ),
                     const SizedBox(height: 12.0),
