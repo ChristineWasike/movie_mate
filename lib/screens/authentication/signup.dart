@@ -79,7 +79,7 @@ class _SignUpState extends State<SignUp> {
                       validator: (val) =>
                           val!.isEmpty ? 'Enter your last name' : null,
                       onChanged: (val) {
-                        setState(() => firstName = val);
+                        setState(() => lastName = val);
                       },
                     ),
                     const SizedBox(height: 20.0),
@@ -156,6 +156,7 @@ class _SignUpState extends State<SignUp> {
                           onPressed: () async {
                             if(_formKey.currentState!.validate()){
                               dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                              _auth.userSetup(firstName +' '+ lastName);
                               if(result == null) {
                                 setState(() {
                                   error = 'Please supply a valid email';

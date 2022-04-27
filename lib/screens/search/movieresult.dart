@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:movie_mate/data/models/movieDetailsModel.dart';
 import 'package:movie_mate/data/models/movieModel.dart';
 import 'package:movie_mate/screens/search/descriptiontext.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:movie_mate/service/database.dart';
+
 
 class MovieResult extends StatefulWidget {
   MovieDetails details;
@@ -15,6 +19,8 @@ class MovieResult extends StatefulWidget {
 
 class _MovieResultState extends State<MovieResult> {
   bool favStatus = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -35,6 +41,10 @@ class _MovieResultState extends State<MovieResult> {
                 if (favStatus == false) {
                   favStatus = true;
                   // IMPLEMENT FAVOURITE ADDING BACKEND CALL
+                  // print(widget.details.title);
+                  final User? user = _auth.currentUser;
+                  DatabaseService(uid: user?.uid).addMovie(widget.details.title, widget.details.imdbID,user?.uid);
+                  // print(user?.uid);
                 } else {
                   favStatus = false;
                   // IMPLEMENT FAVOURITE REMOVING BACKEND CALL
@@ -49,6 +59,7 @@ class _MovieResultState extends State<MovieResult> {
         ),
       );
 
+  @override
   Widget buildMoviePageBody(MovieDetails details) => Container(
         child: ListView(
           shrinkWrap: true,
@@ -238,4 +249,5 @@ class _MovieResultState extends State<MovieResult> {
         s,
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
       );
+
 }

@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^3.1.12
   http: ^0.13.4
   models: ^0.0.2
+  intl:
 
 
 dev_dependencies:
