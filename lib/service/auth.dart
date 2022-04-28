@@ -22,11 +22,9 @@ class AuthService {
       snapshot.docs.forEach((element) {
         favourites[element["movieimdbID"]] = element["movieName"];
       });
-      Users.withFavourites(uid: user.uid, favourites: favourites);
     });
+
     return Users.withFavourites(uid: user.uid, favourites: favourites);
-  
-    );
   }
 
   // auth change user stream
