@@ -5,8 +5,8 @@ import 'package:movie_mate/data/models/movieModel.dart';
 import 'package:movie_mate/screens/search/descriptiontext.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:movie_mate/service/currentuserdata.dart';
 import 'package:movie_mate/service/database.dart';
-
 
 class MovieResult extends StatefulWidget {
   MovieDetails details;
@@ -18,46 +18,55 @@ class MovieResult extends StatefulWidget {
 }
 
 class _MovieResultState extends State<MovieResult> {
-  bool favStatus = false;
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3279e2), Colors.purple],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+  Widget build(BuildContext context) {
+    bool favStatus =
+        CurrentUser.user!.getFavourites().keys.contains(widget.details.getID());
+    print(CurrentUser.user!.getFavourites());
+    print(widget.details.getID());
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF3279e2), Colors.purple],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(child: buildMoviePageBody(widget.details)),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              final User? user = _auth.currentUser;
+              if (favStatus == false) {
+                favStatus = true;
+                // IMPLEMENT FAVOURITE ADDING BACKEND CALL
+                // print(widget.details.title);
+                DatabaseService(uid: user?.uid).addMovie(
+                    widget.details.title, widget.details.imdbID, user?.uid);
+                CurrentUser.user
+                    ?.addFavourite(widget.details.imdbID, widget.details.title);
+                // print(user?.uid);
+              } else {
+                favStatus = false;
+                // IMPLEMENT FAVOURITE REMOVING BACKEND CALL
+                DatabaseService(uid: user?.uid)
+                    .removeMovie(widget.details.imdbID);
+                CurrentUser.user?.removeFavourite(widget.details.imdbID);
+              }
+            });
+          },
+          child: Icon(
+            favStatus ? Icons.favorite : Icons.favorite_border,
+            color: favStatus ? Colors.red : Colors.white,
           ),
         ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body:
-              SingleChildScrollView(child: buildMoviePageBody(widget.details)),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                if (favStatus == false) {
-                  favStatus = true;
-                  // IMPLEMENT FAVOURITE ADDING BACKEND CALL
-                  // print(widget.details.title);
-                  final User? user = _auth.currentUser;
-                  DatabaseService(uid: user?.uid).addMovie(widget.details.title, widget.details.imdbID,user?.uid);
-                  // print(user?.uid);
-                } else {
-                  favStatus = false;
-                  // IMPLEMENT FAVOURITE REMOVING BACKEND CALL
-                }
-              });
-            },
-            child: Icon(
-              favStatus ? Icons.favorite : Icons.favorite_border,
-              color: favStatus ? Colors.red : Colors.white,
-            ),
-          ),
-        ),
-      );
+      ),
+    );
+  }
 
   @override
   Widget buildMoviePageBody(MovieDetails details) => Container(
@@ -249,5 +258,4 @@ class _MovieResultState extends State<MovieResult> {
         s,
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
       );
-
 }

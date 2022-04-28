@@ -1,6 +1,7 @@
 import 'package:movie_mate/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:movie_mate/service/currentuserdata.dart';
 
 class AuthService {
 //
@@ -8,12 +9,25 @@ class AuthService {
 
   // create user obj based on firebase user
   Users? _userFromFirebaseUser(User? user) {
-    if (user == null){
+    if (user == null) {
       return null;
     }
-      return Users(uid: user.uid);
+    Map<String, String> favourites = {};
+    FirebaseFirestore.instance
+        .collection('Favorites')
+        .doc(user.uid)
+        .collection('myfavorites')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((element) {
+        favourites[element["movieimdbID"]] = element["movieName"];
+      });
+      Users.withFavourites(uid: user.uid, favourites: favourites);
+    });
+    return Users.withFavourites(uid: user.uid, favourites: favourites);
+  
+    );
   }
-
 
   // auth change user stream
   Stream<Users?> get user {
@@ -25,7 +39,9 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInAnonymously();
       User? user = result.user;
-      return _userFromFirebaseUser(user!);
+      Users? userData = _userFromFirebaseUser(user!);
+      CurrentUser.setUser(userData);
+      return userData;
     } catch (e) {
       print(e.toString());
       return null;
@@ -36,7 +52,8 @@ class AuthService {
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       User? user = result.user;
       return user;
     } catch (error) {
@@ -45,11 +62,11 @@ class AuthService {
     }
   }
 
-
   // register with email and password
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       User? user = result.user;
       // return _userFromFirebaseUser(user!);
     } catch (error) {
@@ -57,7 +74,6 @@ class AuthService {
       return null;
     }
   }
-
 
   // sign out
   Future signOut() async {
@@ -70,19 +86,14 @@ class AuthService {
   }
 
   // Storing User Details into db
-    Future<void>userSetup(String displayName) async{
-      CollectionReference users = FirebaseFirestore.instance.collection('Users');
-      FirebaseAuth _auth = FirebaseAuth.instance;
-      String? uid = _auth.currentUser?.uid.toString();
-      users.add({
-        'displayName': displayName,
-        'uid': uid
-      });
-      return;
-    }
+  Future<void> userSetup(String displayName) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String? uid = _auth.currentUser?.uid.toString();
+    users.add({'displayName': displayName, 'uid': uid});
+    return;
+  }
 
   // Get current user
-  Future getCurrentUser() async{
-
-  }
+  Future getCurrentUser() async {}
 }

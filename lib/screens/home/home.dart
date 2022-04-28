@@ -12,7 +12,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String? uid = '';
 
-
   @override
   void initState() {
     getuid();
@@ -29,11 +28,9 @@ class _HomeState extends State<Home> {
     setState(() {
       uid = user?.uid;
     });
-
-
   }
-  final AuthService _auth = AuthService();
 
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +53,7 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body:
-      Column(
+      body: Column(
         children: [
           Align(
             alignment: Alignment.topRight,
@@ -70,41 +66,39 @@ class _HomeState extends State<Home> {
                   showSearch(context: context, delegate: MovieSearch());
                 }),
           ),
-      Text(
-        'Your favorite movies will be found below',
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
-      ),
+          Text('Your favorite movies will be found below',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           Expanded(
-            child:
-            SizedBox(
+            child: SizedBox(
               child: Container(
-                child:
-                StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Favorites')
-                            .doc(uid)
-                            .collection('myfavorites')
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else {
-                            print(uid);
-                            final docs = snapshot.data.docs;
-                              return ListView.builder(
-                                    itemCount: docs.length,
-                                    itemBuilder: (context, index){
-                                      return Container(
-                                        child: Column(children: [Text(docs[index]['movieName'])],),
-                                      );
-                                    }
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Favorites')
+                        .doc(uid == '' ? ' ' : uid)
+                        .collection('myfavorites')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.data == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        print(uid);
+                        final docs = snapshot.data.docs;
+                        return ListView.builder(
+                            itemCount: docs.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                child: Column(
+                                  children: [Text(docs[index]['movieName'])],
+                                ),
                               );
+                            });
                       }
-                    }
-                  ),
-                ),
+                    }),
+              ),
             ),
           )
         ],
