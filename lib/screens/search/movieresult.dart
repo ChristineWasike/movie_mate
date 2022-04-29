@@ -57,6 +57,22 @@ class _MovieResultState extends State<MovieResult> {
                     .removeMovie(widget.details.imdbID);
                 CurrentUser.user?.removeFavourite(widget.details.imdbID);
               }
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    (favStatus ? 'Added to ' : 'Removed from ') + 'Favourites',
+                    textAlign: TextAlign.center,
+                  ),
+                  duration: const Duration(milliseconds: 1500),
+                  width: 280.0, // Width of the SnackBar.
+                  padding: const EdgeInsets.all(10),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              );
             });
           },
           child: Icon(
