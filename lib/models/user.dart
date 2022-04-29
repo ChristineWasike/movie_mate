@@ -13,6 +13,10 @@ class Users {
     favourites[movieId] = movieName;
   }
 
+  setFavourites(Map<String, String> favourites) {
+    this.favourites = favourites;
+  }
+
   removeFavourite(String movieId) {
     favourites.remove(movieId);
   }

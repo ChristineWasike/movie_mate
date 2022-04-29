@@ -22,6 +22,7 @@ class AuthService {
       snapshot.docs.forEach((element) {
         favourites[element["movieimdbID"]] = element["movieName"];
       });
+      CurrentUser.user!.setFavourites(favourites);
     });
 
     return Users.withFavourites(uid: user.uid, favourites: favourites);
