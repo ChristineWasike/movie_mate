@@ -242,9 +242,44 @@ class _MovieResultState extends State<MovieResult> {
         ],
       );
 
+  Widget ratingDialogBuilder(MovieDetails details) => AlertDialog(
+        title: const Text('More ratings'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: [
+              for (var rating in details.getRatings().keys)
+                Column(
+                  children: [
+                    buildHeading(rating),
+                    Text(details.getRatings()[rating]),
+                  ],
+                ),
+              details.getRatings().length == 0
+                  ? const Text(
+                      "No other ratings",
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(height: 0),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Close'),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+
   Widget buildRating(details) => Row(
         children: [
-          const Icon(Icons.star, color: Color(0xfff3ce13)),
+          IconButton(
+              onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        ratingDialogBuilder(details),
+                  ),
+              icon: const Icon(Icons.star, color: Color(0xfff3ce13))),
           const SizedBox(width: 5),
           Text(
             details.getImdbRating(),
@@ -263,7 +298,7 @@ class _MovieResultState extends State<MovieResult> {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Color(0xfff3ce13),
+              color: const Color(0xfff3ce13),
             ),
             padding: EdgeInsets.all(3),
           )

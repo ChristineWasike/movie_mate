@@ -24,7 +24,7 @@ class MovieDetails extends Movie {
   final String awards;
   @override
   final String posterSource;
-  final List<Map<String, String>> ratings;
+  final Map<String, String> ratings;
   // key: source, value: rating
   final String metascore;
   final String imdbRating;
@@ -103,11 +103,11 @@ class MovieDetails extends Movie {
         response: json["Response"]);
   }
 
-  static List<Map<String, String>> parseRatings(List<dynamic> ratingList) {
-    List<Map<String, String>> res = [];
+  static Map<String, String> parseRatings(List<dynamic> ratingList) {
+    // List<Map<String, String>> res = [];
+    Map<String, String> res = {};
     for (var rating in ratingList) {
-      Map<String, String> pair = {rating["Source"]: rating["Value"]};
-      res.add(pair);
+      res[rating["Source"]] = rating["Value"];
     }
     return res;
   }
