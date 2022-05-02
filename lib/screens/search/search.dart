@@ -19,6 +19,7 @@ class _SearchState extends State<Search> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: const Color(0xFF3279e2),
         actions: [
           IconButton(
               icon: Icon(Icons.search),
