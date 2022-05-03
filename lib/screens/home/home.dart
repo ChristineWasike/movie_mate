@@ -71,11 +71,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.person,
+            color: Colors.white,),
             label: const Text(
               'Logout',
               style: TextStyle(
-                  color: Color(0xFF3279e2), fontWeight: FontWeight.bold),
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
             onPressed: () async {
               await _auth.signOut();
